@@ -28,9 +28,7 @@ class DinosaurTest extends TestCase
         //Arrange
         $dino = new Dinosaur(
             name: 'Big Eaty',
-            genus: 'Tyrannosaurus',
             length: 15,
-            enclosure: 'Paddock A',
         );
 
         //Act
@@ -38,8 +36,35 @@ class DinosaurTest extends TestCase
 
         //Assert
         $this->assertSame('Large', $size);
-
-
     }
 
+    public function testDinosaurBetween5and9MetersOrGreaterIsMedium(): void
+    {
+        //Arrange
+        $dino = new Dinosaur(
+            name: 'Big Mami',
+            length: 9,
+        );
+
+        //Act
+        $size = $dino->DefineTypeSize();
+
+        //Assert
+        $this->assertSame('Medium', $size, 'This is supposed to be a Medium Dino');
+    }
+
+    public function testDinosaurUnder5MetersIsSmall(): void
+    {
+        //Arrange
+        $dino = new Dinosaur(
+            name: 'Big Mami',
+            length: 4,
+        );
+
+        //Act
+        $size = $dino->defineTypeSize();
+
+        //Assert
+        $this->assertSame('Small', $size, 'This is supposed to be a Small Dino');
+    }
 }
