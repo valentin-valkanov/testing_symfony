@@ -36,4 +36,13 @@ class Dinosaur
     {
         return $this->enclosure;
     }
+
+    public function DefineTypeSize(): string
+    {
+        if($this->getLength() >= 10) {
+            $size = 'Large';
+        }
+
+        return $size;
+    }
 }

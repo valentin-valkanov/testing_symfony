@@ -22,4 +22,24 @@ class DinosaurTest extends TestCase
         $this->assertSame(15, $dino->getLength());
         $this->assertSame('Paddock A', $dino->getEnclosure());
     }
+
+    public function testDinosaurOver10MetersOrGreaterIsLarge(): void
+    {
+        //Arrange
+        $dino = new Dinosaur(
+            name: 'Big Eaty',
+            genus: 'Tyrannosaurus',
+            length: 15,
+            enclosure: 'Paddock A',
+        );
+
+        //Act
+        $size = $dino->DefineTypeSize();
+
+        //Assert
+        $this->assertSame('Large', $size);
+
+
+    }
+
 }
