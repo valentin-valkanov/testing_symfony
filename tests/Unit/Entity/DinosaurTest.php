@@ -22,49 +22,28 @@ class DinosaurTest extends TestCase
         $this->assertSame(15, $dino->getLength());
         $this->assertSame('Paddock A', $dino->getEnclosure());
     }
-
-    public function testDinosaurOver10MetersOrGreaterIsLarge(): void
+    /**
+     * @dataProvider typeSizeProvider
+     */
+    public function testDinosaurHasCorrectTypeSizeFromLength(int $length, string $expectedSize): void
     {
         //Arrange
         $dino = new Dinosaur(
             name: 'Big Eaty',
-            length: 15,
+            length: $length,
         );
 
         //Act
         $size = $dino->DefineTypeSize();
 
         //Assert
-        $this->assertSame('Large', $size);
+        $this->assertSame($expectedSize, $size);
     }
 
-    public function testDinosaurBetween5and9MetersOrGreaterIsMedium(): void
+    public function typeSizeProvider(): \Generator
     {
-        //Arrange
-        $dino = new Dinosaur(
-            name: 'Big Mami',
-            length: 9,
-        );
-
-        //Act
-        $size = $dino->DefineTypeSize();
-
-        //Assert
-        $this->assertSame('Medium', $size, 'This is supposed to be a Medium Dino');
-    }
-
-    public function testDinosaurUnder5MetersIsSmall(): void
-    {
-        //Arrange
-        $dino = new Dinosaur(
-            name: 'Big Mami',
-            length: 4,
-        );
-
-        //Act
-        $size = $dino->defineTypeSize();
-
-        //Assert
-        $this->assertSame('Small', $size, 'This is supposed to be a Small Dino');
+        yield '10 Meter Large Dino' => [10, 'Large'];
+        yield '5 Meter Medium Dino' => [5, 'Medium'];
+        yield '4 Meter Small Dino' => [4, 'Small'];
     }
 }
