@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Service;
 
@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GithubService
 {
-    public function __construct(private HttpClientInterface $client,private LoggerInterface $logger)
+    public function __construct(private HttpClientInterface $httpClient, private LoggerInterface $logger)
     {
     }
 
@@ -16,30 +16,29 @@ class GithubService
     {
         $health = HealthStatus::HEALTHY;
 
-        //Call Github API
-        $response = $this->client->request(
+        $response = $this->httpClient->request(
             method: 'GET',
             url: 'https://api.github.com/repos/SymfonyCasts/dino-park/issues'
         );
 
         $this->logger->info('Request Dino Issues', [
             'dino' => $dinosaurName,
-            'responseStatus' => $response->getStatusCode()
+            'responseStatus' => $response->getStatusCode(),
+        ]);
 
-            ]);
-
-        //Filter the issues
-        foreach ($response->toArray() as $issue){
-            if(str_contains($issue['title'], $dinosaurName)){
+        foreach ($response->toArray() as $issue) {
+            if (str_contains($issue['title'], $dinosaurName)) {
                 $health = $this->getDinoStatusFromLabels($issue['labels']);
             }
         }
+
         return $health;
     }
 
     private function getDinoStatusFromLabels(array $labels): HealthStatus
     {
-        $status = null;
+        $health = null;
+
         foreach ($labels as $label) {
             $label = $label['name'];
 
@@ -47,9 +46,18 @@ class GithubService
             if (!str_starts_with($label, 'Status:')) {
                 continue;
             }
+
             // Remove the "Status:" and whitespace from the label
             $status = trim(substr($label, strlen('Status:')));
+
+            $health = HealthStatus::tryFrom($status);
+
+            // Determine if we know about the label - throw an exception if we don't
+            if (null === $health) {
+                throw new \RuntimeException(sprintf('%s is an unknown status label!', $label));
+            }
         }
-        return HealthStatus::tryFrom($status);
+
+        return $health ?? HealthStatus::HEALTHY;
     }
 }
