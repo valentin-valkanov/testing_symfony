@@ -4,20 +4,20 @@ namespace App\Service;
 
 use App\Enum\HealthStatus;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GithubService
 {
-    public function __construct(private LoggerInterface $logger)
+    public function __construct(private HttpClientInterface  $client,private LoggerInterface $logger)
     {
     }
 
     public function getHealthReport(string $dinosaurName): HealthStatus
     {
         $health = HealthStatus::HEALTHY;
+
         //Call Github API
-        $client = HttpClient::create();
-        $response = $client->request(
+        $response = $this->client->request(
             method: 'GET',
             url: 'https://api.github.com/repos/SymfonyCasts/dino-park/issues'
         );
@@ -42,6 +42,7 @@ class GithubService
         $status = null;
         foreach ($labels as $label) {
             $label = $label['name'];
+
             // We only care about "Status" labels
             if (!str_starts_with($label, 'Status:')) {
                 continue;
