@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GithubService
 {
-    public function __construct(private HttpClientInterface  $client,private LoggerInterface $logger)
+    public function __construct(private HttpClientInterface $client,private LoggerInterface $logger)
     {
     }
 

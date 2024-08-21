@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 use Twig\Node\Expression\TestExpression;
 
 class GithubServiceTest extends TestCase
@@ -19,6 +20,29 @@ class GithubServiceTest extends TestCase
     {
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockHttpClient = $this->createMock(HttpClientInterface::class);
+        $mockResponse = $this->createMock(ResponseInterface::class);
+
+        $mockResponse
+            ->method('toArray')
+            ->willReturn([
+                [
+                    'title' => 'Daisy',
+                    'labels' => [['name' => 'Status: Sick']]
+
+                ],
+                [
+                    'title' => 'Maverick',
+                    'labels' => [['name' => 'Status: Healthy']]
+
+                ]
+            ])
+        ;
+
+        $mockHttpClient
+            ->method('request')
+            ->willReturn($mockResponse)
+        ;
+
 
         $service = new GithubService($mockHttpClient, $mockLogger);
 
