@@ -31,5 +31,4 @@ class GithubServiceTest extends TestCase
             'Maverick',
         ];
     }
-
 }
